@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+class AGun;
+
 UCLASS()
 class SIMPLESHOOTER_API AShooterCharacter : public ACharacter
 {
@@ -20,10 +22,40 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	UFUNCTION(BlueprintPure)
+	bool IsDead() const;
+
+	UFUNCTION(BlueprintPure)
+	float GetHealthPercent() const;
+
+	void Shoot();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+private:
+
+	void MoveForward(float axisValue);
+	void MoveRight(float axisValue);
+	void LookUpRate(float axisValue);
+	void LookRightRate(float axisValue);
+
+	UPROPERTY(EditAnywhere)
+	float rotationRate = 10;
+	UPROPERTY(EditDefaultsOnly)
+	float maxHealth = 100;
+
+	UPROPERTY(VisibleAnywhere)
+	float health;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AGun> gunClass;
+
+	UPROPERTY()
+	AGun* gun;
 };
